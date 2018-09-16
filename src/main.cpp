@@ -100,11 +100,11 @@ int main() {
           */
 
           for (size_t i = 0; i < ptsx.size(); i++) {
-            // shift car reference anglo to 90 degrees
+            // shift car reference angle to 90 degrees
             double shift_x = ptsx[i] - px;
             double shift_y = ptsy[i] - py;
-            ptsx[i] = shift_x*cos(0-psi) + shift_y*sin(0-psi);
-            ptsy[i] = - (shift_x*sin(0-psi) + shift_y*cos(0-psi));
+            ptsx[i] = shift_x*cos(psi) + shift_y*sin(psi);
+            ptsy[i] = - (shift_x*sin(psi) + shift_y*cos(psi));
           }
 
           double* ptrx = &ptsx[0];
