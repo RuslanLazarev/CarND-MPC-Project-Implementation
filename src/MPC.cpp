@@ -65,7 +65,7 @@ class FG_eval {
       fg[0] += 5*CppAD::pow(vars[a_start+i+1] - vars[a_start+i], 2);
     }
 
-    
+
     
     //
     // Setup Constraints
@@ -243,8 +243,8 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // creates a 2 element double vector.
 
   vector<double> result;
-  result.push_back(solution.x[delta_start]);
-  result.push_back(solution.x[a_start]);
+  result.push_back((solution.x[delta_start] + solution.x[delta_start +1])/2.0);
+  result.push_back((solution.x[a_start] + solution.x[a_start])/2.0);
 
   for (i = 0; i < N - 1; i++) {
     result.push_back(solution.x[x_start + i + 1]);

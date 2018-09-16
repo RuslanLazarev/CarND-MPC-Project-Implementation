@@ -103,8 +103,8 @@ int main() {
             // shift car reference anglo to 90 degrees
             double shift_x = ptsx[i] - px;
             double shift_y = ptsy[i] - py;
-            ptsx[i] = (shift_x*cos(0-psi) - shift_y*sin(0-psi));
-            ptsy[i] = (shift_x*sin(0-psi) - shift_y*cos(0-psi));
+            ptsx[i] = shift_x*cos(0-psi) + shift_y*sin(0-psi);
+            ptsy[i] = - (shift_x*sin(0-psi) + shift_y*cos(0-psi));
           }
 
           double* ptrx = &ptsx[0];
@@ -123,7 +123,7 @@ int main() {
           double throttle_value = j[1]["throttle"];
 
           Eigen::VectorXd state(6);
-          state << 0, 0, 0, v, cte, epsi;
+          state << 0.0, 0.0, 0.0, v, cte, epsi;
 
           auto vars = mpc.Solve(state, coeffs);
 
@@ -158,7 +158,7 @@ int main() {
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
-          msgJson["steering_angle"] = vars[0]/deg2rad(25);
+          msgJson["steering_angle"] = vars[0]/deg2rad(25)*Lf;
           msgJson["throttle"] = vars[1];
           
           msgJson["mpc_x"] = mpc_x_vals;
