@@ -50,19 +50,21 @@ class FG_eval {
     fg[0] = 0;
 
     for (size_t i = 0; i < N; i++) {
-      fg[0] += CppAD::pow(vars[cte_start+i] - ref_cte, 2);
-      fg[0] += 20*CppAD::pow(vars[epsi_start+i] - ref_epsi, 2);
-      fg[0] += 0.5*CppAD::pow(vars[v_start+i] - ref_v, 2);
+      fg[0] += 2500*CppAD::pow(vars[cte_start+i], 2);
+      fg[0] += 2500*CppAD::pow(vars[epsi_start+i], 2);
+      fg[0] += CppAD::pow(vars[v_start+i] - ref_v, 2);
     }
 
     for (size_t i = 0; i < N - 1; i++) {
-      fg[0] += CppAD::pow(vars[delta_start + i], 2);
-      fg[0] += CppAD::pow(vars[a_start + i], 2);
+      fg[0] += 5*CppAD::pow(vars[delta_start + i], 2);
+      fg[0] += 5*CppAD::pow(vars[a_start + i], 2);
+
+      fg[0] += 700*CppAD::pow(vars[delta_start + i] * vars[v_start+i], 2);
     }
 
     for (size_t i = 0; i < N - 2; i++) {
-      fg[0] += 12*CppAD::pow(vars[delta_start + i +1] - vars[delta_start+i], 2);
-      fg[0] += 5*CppAD::pow(vars[a_start+i+1] - vars[a_start+i], 2);
+      fg[0] += 120*CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
+      fg[0] += 50*CppAD::pow(vars[a_start+i+1] - vars[a_start+i], 2);
     }
 
 
@@ -101,8 +103,8 @@ class FG_eval {
       AD<double> a0 = vars[a_start + i];
 
       // polynomial value and desired psi
-      AD<double> f0 = coeffs[0] + coeffs[1]*x0 + coeffs[2]*x0*x0 + coeffs[3]*x0*x0*x0;
-      AD<double> psides0 = CppAD::atan(3*coeffs[3]*x0*x0 + 2*coeffs[2]*x0 + coeffs[1]);
+      AD<double> f0 = coeffs[0] + coeffs[1]*x0 + coeffs[2]*CppAD::pow(x0, 2) + coeffs[3]*CppAD::pow(x0, 3);
+      AD<double> psides0 = CppAD::atan(3*coeffs[3]*CppAD::pow(x0, 2) + 2*coeffs[2]*x0 + coeffs[1]);
 
       // model equations from the classroom
       fg[2 + x_start + i] = x1 - (x0 + v0*CppAD::cos(psi0)*dt);
@@ -155,9 +157,18 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   Dvector vars_upperbound(n_vars);
   // TODO: Set lower and upper limits for variables.
 
+  // Set the initial variable values
+  vars[x_start] = x;
+  vars[y_start] = y;
+  vars[psi_start] = psi;
+  vars[v_start] = v;
+  vars[cte_start] = cte;
+  vars[epsi_start] = epsi;
+
+
   // Set all non-actuators uppe rand lower limits
   // to the max negative and positive values.
-  for (i = 0; i < delta_start; i++) {
+  for (int i = 0; i < delta_start; i++) {
     vars_lowerbound[i] = -1.0e19;
     vars_upperbound[i] = 1.0e19;
   }
@@ -165,14 +176,14 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // the upper and lower limits of delta are set to -25 and 25
   // degrees (values in radians). This values came from the simulator.
   // It can be changed to something else.
-  for (i = delta_start; i < a_start; i++) {
+  for (int i = delta_start; i < a_start; i++) {
     vars_lowerbound[i] = -0.436332*Lf;
     vars_upperbound[i] = 0.436332*Lf;
   }
 
   // Acceleration/decceleration upper and lower limits.
   // it can be changed to different limits.
-  for (i = a_start; i < n_vars; i++) {
+  for (int i = a_start; i < n_vars; i++) {
     vars_lowerbound[i] = -1.0;
     vars_upperbound[i] = 1.0;
   }
@@ -181,7 +192,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // Should be 0 besides initial state.
   Dvector constraints_lowerbound(n_constraints);
   Dvector constraints_upperbound(n_constraints);
-  for (i = 0; i < n_constraints; i++) {
+  for (int i = 0; i < n_constraints; i++) {
     constraints_lowerbound[i] = 0;
     constraints_upperbound[i] = 0;
   }
@@ -243,8 +254,9 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // creates a 2 element double vector.
 
   vector<double> result;
-  result.push_back((solution.x[delta_start] + solution.x[delta_start +1])/2.0);
-  result.push_back((solution.x[a_start] + solution.x[a_start])/2.0);
+  
+  result.push_back((solution.x[delta_start] + solution.x[delta_start + 1])/2.0);
+  result.push_back((solution.x[a_start] + solution.x[a_start + 1])/2.0);
 
   for (i = 0; i < N - 1; i++) {
     result.push_back(solution.x[x_start + i + 1]);
