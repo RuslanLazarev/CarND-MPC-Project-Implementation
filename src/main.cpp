@@ -99,7 +99,7 @@ int main() {
           *
           */
 
-          for (unsigned int  i = 0; i < ptsx.size(); i++) {
+          for (size_t i = 0; i < ptsx.size(); i++) {
             // shift car reference anglo to 90 degrees
             double shift_x = ptsx[i] - px;
             double shift_y = ptsy[i] - py;
@@ -117,7 +117,7 @@ int main() {
 
           //Calculate cte and epsi
           double cte = polyeval(coeffs, 0);
-          double epsi = -atan(coeffs[1]);
+          double epsi = atan(coeffs[1]);
 
           double steer_value = j[1]["steering_angle"];
           double throttle_value = j[1]["throttle"];
