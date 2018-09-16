@@ -105,14 +105,14 @@ int main() {
             // shift car reference angle to 90 degrees
             double shift_x = ptsx[i] - px;
             double shift_y = ptsy[i] - py;
-            waypoints_x[i] = (shift_x*cos(0-psi) - shift_y*sin(0-psi));
-            waypoints_y[i] = (shift_x*sin(0-psi) - shift_y*cos(0-psi));
+            ptsx[i] = (shift_x*cos(0-psi) - shift_y*sin(0-psi));
+            ptsy[i] = (shift_x*sin(0-psi) - shift_y*cos(0-psi));
           }
 
-          double* ptrx = &waypoints_x[0];
+          double* ptrx = &ptsx[0];
           Eigen::Map<Eigen::VectorXd> ptsx_transform(ptrx, 6);
 
-          double* ptry = &waypoints_y[0];
+          double* ptry = &ptsy[0];
           Eigen::Map<Eigen::VectorXd> ptsy_transform(ptry, 6);
 
           auto coeffs = polyfit(ptsx_transform, ptsy_transform, 3);
