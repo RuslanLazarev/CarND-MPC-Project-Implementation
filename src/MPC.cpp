@@ -50,21 +50,20 @@ class FG_eval {
     fg[0] = 0;
 
     for (size_t i = 0; i < N; i++) {
-      fg[0] += 2500*CppAD::pow(vars[cte_start+i], 2);
-      fg[0] += 2500*CppAD::pow(vars[epsi_start+i], 2);
+      fg[0] += 3000*CppAD::pow(vars[cte_start+i], 2);
+      fg[0] += 3000*CppAD::pow(vars[epsi_start+i], 2);
       fg[0] += CppAD::pow(vars[v_start+i] - ref_v, 2);
     }
 
     for (size_t i = 0; i < N - 1; i++) {
       fg[0] += 5*CppAD::pow(vars[delta_start + i], 2);
       fg[0] += 5*CppAD::pow(vars[a_start + i], 2);
-
       fg[0] += 700*CppAD::pow(vars[delta_start + i] * vars[v_start+i], 2);
     }
 
     for (size_t i = 0; i < N - 2; i++) {
-      fg[0] += 120*CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
-      fg[0] += 50*CppAD::pow(vars[a_start+i+1] - vars[a_start+i], 2);
+      fg[0] += 200*CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
+      fg[0] += 10*CppAD::pow(vars[a_start+i+1] - vars[a_start+i], 2);
     }
 
 
@@ -109,7 +108,7 @@ class FG_eval {
       // model equations from the classroom
       fg[2 + x_start + i] = x1 - (x0 + v0*CppAD::cos(psi0)*dt);
       fg[2 + y_start + i] = y1 - (y0 + v0*CppAD::sin(psi0)*dt);
-      fg[2 + psi_start + i] = psi1 - (psi0 + v0 * delta0/Lf * dt);
+      fg[2 + psi_start + i] = psi1 - (psi0 - v0 * delta0/Lf * dt);
       fg[2 + v_start + i] = v1 - (v0 + a0*dt);
       fg[2 + cte_start + i] = cte1 - ((f0-y0) + (v0*CppAD::sin(epsi0)*dt));
       fg[2 + epsi_start + i] = epsi1 - ((psi0-psides0) - v0 *delta0/Lf * dt);
@@ -254,7 +253,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // creates a 2 element double vector.
 
   vector<double> result;
-  
+
   result.push_back((solution.x[delta_start] + solution.x[delta_start + 1])/2.0);
   result.push_back((solution.x[a_start] + solution.x[a_start + 1])/2.0);
 
