@@ -112,7 +112,7 @@ int main() {
           double* ptrx = &waypoints_x[0];
           Eigen::Map<Eigen::VectorXd> ptsx_transform(ptrx, 6);
 
-          double* ptry = &waypoints_x[0];
+          double* ptry = &waypoints_y[0];
           Eigen::Map<Eigen::VectorXd> ptsy_transform(ptry, 6);
 
           auto coeffs = polyfit(ptsx_transform, ptsy_transform, 3);
