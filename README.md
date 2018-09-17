@@ -4,6 +4,7 @@
 
 
 ### The Model
+The model has been thoroughly described in the classroom.  The state and control vector are given by:
 $\vec{x}_t = \left( \begin{array}{c}
 	x_t\\
     y_t\\
@@ -14,6 +15,16 @@ $\vec{x}_t = \left( \begin{array}{c}
 	\delta_t\\
     a_t
 	\end{array}\right)$
+where $x$, $y$ and $\psi$ are the vehicle position and heading in the vehicle coordinate system. Other states are the cross track error with respect to our fitted polynomial, $cte$, and the deviation between the vehicle heading and the desired heading, $\Delta\psi$. The control vector is given by the steering angle and the vehicle's acceleration.
+$x_{t+1} = x_t + v_t\cos(\psi_t)\Delta t$
+$y_{t+1} = y_t + v_t\sin(\psi_t)\Delta t$
+$\psi_{t+1} = \psi_t - \frac{v_t}{L_f} \delta_t \Delta t$
+$v_{t+1} = v_t + a_t \Delta t$
+$cte_{t+1} = f(x_t) - y_t + v_t\sin(\Delta\psi_t)\Delta t$
+$\Delta\psi_{t+1} = \psi_t - \psi_{desired,t} - \frac{v_t}{L_f} \delta_t \Delta t$
+The model is implemented in MPC.cpp. Ipopt library was used to model contraints. MPC solver is employed to minimize the  objective:
+
+$J = \sum^N_{t=1} \lambda_1\cdot(cte^2) + \lambda_2\cdot(\Delta\psi_t)^2 + \lambda_3\cdot(v_t^2\cdot\kappa)^2 + \dots$
 
 
 ### Timestep Length and Elapsed Duration
