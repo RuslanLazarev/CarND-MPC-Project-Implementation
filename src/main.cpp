@@ -96,8 +96,6 @@ int main() {
           double v = j[1]["speed"];
           // v*=0.44704; velocity is in miles
 
-          
-
           /*
           * TODO: Calculate steering angle and throttle using MPC.
           *
@@ -126,7 +124,6 @@ int main() {
           double epsi = -atan(coeffs[1]);
 
           double steer_value = j[1]["steering_angle"];
-          steer_value *= -1;
           double throttle_value = j[1]["throttle"];
 
           //
@@ -134,8 +131,8 @@ int main() {
           px += v*cos(psi)*latency; // px = 0
           py += v*sin(psi)*latency; // py = 0
           cte= cte + v*sin(epsi)*latency;
-          epsi = epsi + v*steer_value*latency/Lf;
-          psi += v*steer_value*latency/Lf; // psi = 0
+          epsi = epsi - v*steer_value*latency/Lf;
+          psi -= v*steer_value*latency/Lf; // psi = 0
           v = v + throttle_value*latency;
 
           Eigen::VectorXd state(6);
