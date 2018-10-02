@@ -203,15 +203,15 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   }
 
   // constraints to deal with latency
-  for (size_t i = delta_start; i < delta_start + fixed_steps; i++) {
-        vars_lowerbound[i] = prev_delta;
-        vars_upperbound[i] = prev_delta;
-    }
+  // for (size_t i = delta_start; i < delta_start + fixed_steps; i++) {
+  //       vars_lowerbound[i] = prev_delta;
+  //       vars_upperbound[i] = prev_delta;
+  //   }
 
-    for (size_t i = a_start; i < a_start + fixed_steps; i++) {
-        vars_lowerbound[i] = prev_a;
-        vars_upperbound[i] = prev_a;
-    }
+  //   for (size_t i = a_start; i < a_start + fixed_steps; i++) {
+  //       vars_lowerbound[i] = prev_a;
+  //       vars_upperbound[i] = prev_a;
+  //   }
 
   constraints_lowerbound[x_start] = x;
   constraints_lowerbound[y_start] = y;
