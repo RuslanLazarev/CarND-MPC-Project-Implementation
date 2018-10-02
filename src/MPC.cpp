@@ -20,7 +20,7 @@ double dt = 0.1;
 //
 // This is the length from front to CoG that has a similar radius.
 const double Lf = 2.67;
-const double latency = 10;
+const double latency = 1;
 
 double ref_cte = 0;
 double ref_epsi = 0;
