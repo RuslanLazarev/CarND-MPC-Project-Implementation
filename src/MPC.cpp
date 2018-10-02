@@ -181,14 +181,14 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // the upper and lower limits of delta are set to -25 and 25
   // degrees (values in radians). This values came from the simulator.
   // It can be changed to something else.
-  for (int i = delta_start; i < a_start; i++) {
+  for (size_t i = delta_start; i < a_start; i++) {
     vars_lowerbound[i] = -0.436332*Lf;
     vars_upperbound[i] = 0.436332*Lf;
   }
 
   // Acceleration/decceleration upper and lower limits.
   // it can be changed to different limits.
-  for (int i = a_start; i < n_vars; i++) {
+  for (size_t i = a_start; i < n_vars; i++) {
     vars_lowerbound[i] = -1.0;
     vars_upperbound[i] = 1.0;
   }
@@ -197,18 +197,18 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // Should be 0 besides initial state.
   Dvector constraints_lowerbound(n_constraints);
   Dvector constraints_upperbound(n_constraints);
-  for (int i = 0; i < n_constraints; i++) {
+  for (size_t i = 0; i < n_constraints; i++) {
     constraints_lowerbound[i] = 0;
     constraints_upperbound[i] = 0;
   }
 
   // constraints to deal with latency
-  for (int i = delta_start; i < delta_start + fixed_steps; i++) {
+  for (size_t i = delta_start; i < delta_start + fixed_steps; i++) {
         vars_lowerbound[i] = prev_delta;
         vars_upperbound[i] = prev_delta;
     }
 
-    for (int i = a_start; i < a_start + fixed_steps; i++) {
+    for (size_t i = a_start; i < a_start + fixed_steps; i++) {
         vars_lowerbound[i] = prev_a;
         vars_upperbound[i] = prev_a;
     }

@@ -94,6 +94,7 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
+          double a = j[1]["throttle"];
           // v*=0.44704; velocity is in miles
           double delta = j[1]["steering angle"];
           delta *= -1; // change of sign because turning left is negative sign in simulator but positive yaw for MPC
