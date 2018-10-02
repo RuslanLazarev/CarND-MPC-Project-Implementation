@@ -274,8 +274,8 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   result.push_back(solution.x[delta_start]);
   result.push_back(solution.x[a_start]);
 
-  //prev_delta = solution.x[delta_start+fixed_steps];
-  //prev_a = solution.x[a_start+fixed_steps];
+  prev_delta = solution.x[delta_start+fixed_steps];
+  prev_a = solution.x[a_start+fixed_steps];
 
   for (i = 0; i < N - 1; i++) {
     result.push_back(solution.x[x_start + i + 1]);
