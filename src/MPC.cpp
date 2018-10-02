@@ -20,7 +20,7 @@ double dt = 0.1;
 //
 // This is the length from front to CoG that has a similar radius.
 const double Lf = 2.67;
-const double latency = 100;
+const double latency = 10;
 
 double ref_cte = 0;
 double ref_epsi = 0;
@@ -37,8 +37,8 @@ size_t a_start = delta_start + N - 1;
 
 // timestep to constraint and variables to save actuator values
 size_t fixed_steps = latency/dt;
-static double prev_a = 0;
-static double prev_delta = 0;
+double prev_a = 0;
+double prev_delta = 0;
 
 class FG_eval {
  public:
