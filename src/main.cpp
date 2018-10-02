@@ -94,10 +94,7 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
-          double a = j[1]["throttle"];
           // v*=0.44704; velocity is in miles
-          double delta = j[1]["steering angle"];
-          delta *= -1; // change of sign because turning left is negative sign in simulator but positive yaw for MPC
 
           
 
@@ -129,6 +126,7 @@ int main() {
           double epsi = -atan(coeffs[1]);
 
           double steer_value = j[1]["steering_angle"];
+          steer_value *= -1;
           double throttle_value = j[1]["throttle"];
 
           //
@@ -141,7 +139,8 @@ int main() {
           v = v + throttle_value*latency;
 
           Eigen::VectorXd state(6);
-          state << 0.0, 0.0, 0.0, v, cte, epsi;
+          //state << 0.0, 0.0, 0.0, v, cte, epsi;
+          state << px, py, psi, v, cte, epsi;
 
           auto vars = mpc.Solve(state, coeffs);
           steer_value = vars[0];
