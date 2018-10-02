@@ -17,6 +17,9 @@ constexpr double pi() { return M_PI; }
 double deg2rad(double x) { return x * pi() / 180; }
 double rad2deg(double x) { return x * 180 / pi(); }
 
+const double Lf = 2.67;
+const double latency = 100;
+
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
 // else the empty string "" will be returned.
@@ -95,14 +98,7 @@ int main() {
           double delta = j[1]["steering angle"];
           delta *= -1; // change of sign because turning left is negative sign in simulator but positive yaw for MPC
 
-          //
-          psi = 0;
-          px += v*cos(psi)*latency; // px = 0
-          py += v*sin(psi)*latency; // py = 0
-          cte= cte + v*sin(epsi)*latency;
-          epsi = epsi + v*delta*latency/Lf;
-          psi += v*delta*latency/Lf; // psi = 0
-          v = v + a*latency;
+          
 
           /*
           * TODO: Calculate steering angle and throttle using MPC.
@@ -136,6 +132,15 @@ int main() {
 
           double steer_value = j[1]["steering_angle"];
           double throttle_value = j[1]["throttle"];
+
+          //
+          psi = 0;
+          px += v*cos(psi)*latency; // px = 0
+          py += v*sin(psi)*latency; // py = 0
+          cte= cte + v*sin(epsi)*latency;
+          epsi = epsi + v*delta*latency/Lf;
+          psi += v*delta*latency/Lf; // psi = 0
+          v = v + a*latency;
 
           Eigen::VectorXd state(6);
           state << 0.0, 0.0, 0.0, v, cte, epsi;
