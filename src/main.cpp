@@ -108,9 +108,6 @@ int main() {
           *
           */
 
-          //
-
-
           vector<double> waypoints_x;
           vector<double> waypoints_y;
 
@@ -139,9 +136,9 @@ int main() {
           px += v*cos(psi)*latency; // px = 0
           py += v*sin(psi)*latency; // py = 0
           cte= cte + v*sin(epsi)*latency;
-          epsi = epsi + v*delta*latency/Lf;
-          psi += v*delta*latency/Lf; // psi = 0
-          v = v + a*latency;
+          epsi = epsi + v*steer_value*latency/Lf;
+          psi += v*steer_value*latency/Lf; // psi = 0
+          v = v + throttle_value*latency;
 
           Eigen::VectorXd state(6);
           state << 0.0, 0.0, 0.0, v, cte, epsi;
