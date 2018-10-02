@@ -20,6 +20,7 @@ double dt = 0.1;
 //
 // This is the length from front to CoG that has a similar radius.
 const double Lf = 2.67;
+const double latency = 100;
 
 double ref_cte = 0;
 double ref_epsi = 0;
@@ -33,6 +34,11 @@ size_t cte_start = v_start + N;
 size_t epsi_start = cte_start + N;
 size_t delta_start = epsi_start + N;
 size_t a_start = delta_start + N - 1;
+
+// timestep to constraint and variables to save actuator values
+size_t fixed_steps = latency/dt;
+static double prev_a = 0;
+static double prev_delta = 0;
 
 class FG_eval {
  public:
@@ -196,6 +202,17 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     constraints_upperbound[i] = 0;
   }
 
+  // constraints to deal with latency
+  for (int i = delta_start; i < delta_start + fixed_steps; i++) {
+        vars_lowerbound[i] = prev_delta;
+        vars_upperbound[i] = prev_delta;
+    }
+
+    for (int i = a_start; i < a_start + fixed_steps; i++) {
+        vars_lowerbound[i] = prev_a;
+        vars_upperbound[i] = prev_a;
+    }
+
   constraints_lowerbound[x_start] = x;
   constraints_lowerbound[y_start] = y;
   constraints_lowerbound[psi_start] = psi;
@@ -254,8 +271,11 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
 
   vector<double> result;
 
-  result.push_back((solution.x[delta_start] + solution.x[delta_start + 1])/2.0);
-  result.push_back((solution.x[a_start] + solution.x[a_start + 1])/2.0);
+  result.push_back(solution.x[delta_start]);
+  result.push_back(solution.x[a_start]);
+
+  prev_delta = solution.x[delta_start+fixed_steps];
+  prev_a = solution.x[a_start+fixed_steps];
 
   for (i = 0; i < N - 1; i++) {
     result.push_back(solution.x[x_start + i + 1]);
