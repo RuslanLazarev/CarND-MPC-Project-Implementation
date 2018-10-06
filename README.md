@@ -31,17 +31,19 @@ CppAD library was used for automatic differentiation.
   
 ### Timestep Length and Elapsed Duration
   
-the values was chosen as <img src="https://latex.codecogs.com/gif.latex?N=10"/> and <img src="https://latex.codecogs.com/gif.latex?dt=0.1"/>. These values were discussed in offfice hours session. Other values were tested (starting from default from classroom <img src="https://latex.codecogs.com/gif.latex?N=25"/> and <img src="https://latex.codecogs.com/gif.latex?dt=0.05"/>) yet they led to chaotic vehicle behavior.
+the values was chosen as <img src="https://latex.codecogs.com/gif.latex?N=10"/> and <img src="https://latex.codecogs.com/gif.latex?dt=0.1"/>. These values were discussed in offfice hours session. Other values were tested (starting from default from classroom <img src="https://latex.codecogs.com/gif.latex?N=25"/> and <img src="https://latex.codecogs.com/gif.latex?dt=0.05"/>) yet a trade-off should be reached for an optimal resolution (<img src="https://latex.codecogs.com/gif.latex?dt"/>) and computattional time (<img src="https://latex.codecogs.com/gif.latex?N"/>) for real-time tasks. While in the prevoius submission the cars drove much faster (there was no kinematic model computation to deal with latency), the updated controller takes longer time on high road curves. Elapsed duration and timesteps lengths together affect the predicted path and the vehicle speed. Long time horizon is harder to calculate on sharp curves, which slows down the car. Algorithm will struggle with polynomial fitting and this will add chaotic behavior to the car's driving.
   
   
 ### Polynomial Fitting and MPC Preprocessing
   
-The waypoint were processed in `main.cpp` file to transform the into vehicle perspective (taking the technique from office hours seesion). Afterwards, polynomial fitting is easier because orientation angle is 0 and vehicle coordinates are at the origin. Polynomial fitting was done as in Lesson 18.
+The waypoint were processed in `main.cpp` file to transform the into vehicle perspective (taking the technique from office hours session). Afterwards, polynomial fitting is easier because orientation angle is 0 and vehicle coordinates are at the origin. Polynomial fitting was done as in Lesson 18.
   
   
 ### Model Predictive Control with Latency
   
-A contributing factor to latency is actuator dynamics. Additionally, there's a 100 millisecond latency between actuations commands on top of the connection latency. A simple way to deal with latency is to average control input over two time points (<img src="https://latex.codecogs.com/gif.latex?t"/> and <img src="https://latex.codecogs.com/gif.latex?t+1"/>).
+A contributing factor to latency is actuator dynamics. Additionally, there's a 100 millisecond latency between actuations commands on top of the connection latency. 
+  
+A kinematic model has been used to deal with latency (as proposed after the first submission review). Here, the controller has used kinematic equationsto predict the states after <img src="https://latex.codecogs.com/gif.latex?100&#x5C;mu%20s"/> before sending them to MPC solver. The update is placed after polynomial fitting and uses vehicle map coordinates.
   
   
   
