@@ -36,7 +36,7 @@ The thrid term was taken into consideration to slow down the vehicle when road h
 CppAD library was used for automatic differentiation.
 
 ### Timestep Length and Elapsed Duration
-the values was chosen as $N=10$ and $dt=0.1$. These values were discussed in offfice hours session. Other values were tested (starting from default from classroom $N=25$ and $dt=0.05$) yet they led to chaotic vehicle behavior.
+the values was chosen as $N=10$ and $dt=0.1$. These values were discussed in offfice hours session. Other values were tested (starting from default from classroom $N=25$ and $dt=0.05$) yet a trade-off should be reached for an optimal resolution ($dt$) and computattional time ($N$) for real-time tasks. While in the prevoius submission the cars drove much faster (there was no kinematic model computation to deal with latency), the updated controller takes longer time on high road curves. Car's speed is down to 10 miles/hour
 
 
 ### Polynomial Fitting and MPC Preprocessing
