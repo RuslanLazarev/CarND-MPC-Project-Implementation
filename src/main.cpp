@@ -172,7 +172,7 @@ int main() {
 
           //double poly_inc = 2.5;
           int num_points = 25;
-          for (int i = 0; i < ptsx_xar.size(); i++) {
+          for (int i = 0; i < ptsx_car.size(); i++) {
             next_x_vals.push_back(ptsx_car[i]);
             next_y_vals.push_back(ptsy_car[i]);
           }
