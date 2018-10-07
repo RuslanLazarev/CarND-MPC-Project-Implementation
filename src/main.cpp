@@ -94,8 +94,8 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
-          //double steer_value = j[1]["steering_angle"];
-          //double throttle_value = j[1]["throttle"];
+          double steer_value = j[1]["steering_angle"];
+          double throttle_value = j[1]["throttle"];
           // v*=0.44704; velocity is in miles
 
           /*
