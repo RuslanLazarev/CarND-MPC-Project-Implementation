@@ -128,6 +128,8 @@ int main() {
 
           //
           psi = 0;
+          px = 0;
+          py = 0;
           px += v*cos(psi)*latency; // px = 0
           py += v*sin(psi)*latency; // py = 0
           cte= cte + v*sin(epsi)*latency;
@@ -136,7 +138,7 @@ int main() {
           v = v + throttle_value*latency;
 
           Eigen::VectorXd state(6);
-          state << 0.0, 0.0, 0.0, v, cte, epsi;
+          state << px, py, psi, v, cte, epsi;
           
 
           auto vars = mpc.Solve(state, coeffs);
