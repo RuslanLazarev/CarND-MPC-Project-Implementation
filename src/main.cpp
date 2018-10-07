@@ -108,7 +108,7 @@ int main() {
           // compensation for latency
           double px_next = px + v*cos(psi)*latency;
           double py_next = py +  v*sin(psi)*latency;
-          double psi next = psi - v*steer_value*latency/Lf;
+          double psi_next = psi - v*steer_value*latency/Lf;
           double v_next = v + throttle_value*latency;
 
           vector<double> waypoints_x;
