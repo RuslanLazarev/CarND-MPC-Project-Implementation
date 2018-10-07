@@ -24,7 +24,7 @@ const double latency = 0.1;
 
 double ref_cte = 0;
 double ref_epsi = 0;
-double ref_v = 100;
+double ref_v = 50; //velocity is limited to 50 miles/hour
 
 size_t x_start = 0;
 size_t y_start = x_start + N;
@@ -56,20 +56,22 @@ class FG_eval {
     fg[0] = 0;
 
     for (size_t i = 0; i < N; i++) {
+      // based on the reference state
       fg[0] += 3000*CppAD::pow(vars[cte_start+i], 2);
       fg[0] += 3000*CppAD::pow(vars[epsi_start+i], 2);
       fg[0] += 10*CppAD::pow(vars[v_start+i] - ref_v, 2);
     }
-
+    //use of actuators
     for (size_t i = 0; i < N - 1; i++) {
       fg[0] += 100*CppAD::pow(vars[delta_start + i], 2);
       fg[0] += 10*CppAD::pow(vars[a_start + i], 2);
-      fg[0] += 700*CppAD::pow(vars[delta_start + i] * vars[v_start+i], 2);
+      fg[0] += 500*CppAD::pow(vars[delta_start + i] * vars[v_start+i], 2);
     }
 
+    // value gap between sequential actuations
     for (size_t i = 0; i < N - 2; i++) {
-      fg[0] += 50*CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
-      fg[0] += 50*CppAD::pow(vars[a_start+i+1] - vars[a_start+i], 2);
+      fg[0] += 50000*CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
+      fg[0] += CppAD::pow(vars[a_start+i+1] - vars[a_start+i], 2);
     }
 
 
