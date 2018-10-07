@@ -106,17 +106,20 @@ int main() {
           */
 
           // compensation for latency
-          
+          double px_next = px + v*cos(psi)*latency;
+          double py_next = py +  v*sin(psi)*latency;
+          double psi next = psi - v*steer_value*latency/Lf;
+          double v_next = v + throttle_value*latency;
 
           vector<double> waypoints_x;
           vector<double> waypoints_y;
 
           for (size_t i = 0; i < ptsx.size(); i++) {
             // shift car reference angle to 90 degrees
-            double shift_x = ptsx[i] - px;
-            double shift_y = ptsy[i] - py;
-            ptsx[i] = (shift_x*cos(0-psi) - shift_y*sin(0-psi));
-            ptsy[i] = (shift_x*sin(0-psi) + shift_y*cos(0-psi));
+            double shift_x = ptsx[i] - px_next;
+            double shift_y = ptsy[i] - py_next;
+            ptsx[i] = (shift_x*cos(0-psi_next) - shift_y*sin(0-psi_next));
+            ptsy[i] = (shift_x*sin(0-psi_next) + shift_y*cos(0-psi_next));
           }
 
           double* ptrx = &ptsx[0];
@@ -131,20 +134,16 @@ int main() {
           
 
           //
-          
-          px += v*cos(psi)*latency; // px = 0
-          py += v*sin(psi)*latency; // py = 0
-         
-          psi -= v*steer_value*latency/Lf; // psi = 0
-          v = v + throttle_value*latency;
-
-          Eigen::VectorXd state(6);
-          state << px, py, psi, v, cte, epsi;
           psi = 0;
           px = 0;
           py = 0;
-          cte= cte + v*sin(epsi)*latency;
+          
+          cte = cte + v*sin(epsi)*latency;
           epsi = epsi - v*steer_value*latency/Lf;
+
+          Eigen::VectorXd state(6);
+          state << px, py, psi, v_next, cte, epsi;
+          
           
 
           auto vars = mpc.Solve(state, coeffs);
