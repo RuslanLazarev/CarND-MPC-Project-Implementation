@@ -36,7 +36,7 @@ The thrid term was taken into consideration to slow down the vehicle when road h
 CppAD library was used for automatic differentiation.
 
 ### Timestep Length and Elapsed Duration
-the values was chosen as $N=10$ and $dt=0.1$. These values were discussed in offfice hours session. Other values were tested (starting from default from classroom $N=25$ and $dt=0.05$) yet a trade-off should be reached for an optimal resolution ($dt$) and computattional time ($N$) for real-time tasks. While in the prevoius submission the cars drove much faster (there was no kinematic model computation to deal with latency), the updated controller takes longer time on high road curves. Elapsed duration and timesteps lengths together affect the predicted path and the vehicle speed. Long time horizon is harder to calculate on sharp curves, which slows down the car. Algorithm will struggle with polynomial fitting and this will add chaotic behavior to the car's driving.
+the values was chosen as $N=10$ and $dt=0.1$. These values were discussed in offfice hours session. Other values were tested (starting from default from classroom $N=25$ and $dt=0.05$) yet a trade-off should be reached for an optimal resolution ($dt$) and computattional time ($N$) for real-time tasks. While in the prevoius submission the cars drove much faster (there was no kinematic model computation to deal with latency), the updated controller takes longer time on high road curves. Elapsed duration and timesteps lengths together affect the predicted path and the vehicle speed. Long time horizon is harder to calculate on sharp curves, which slows down the car. Algorithm will struggle with polynomial fitting and this will add chaotic behavior to the car's driving (can be seen from viasual analysis of `mpc_vals` and `next_vals` waypoints).
 
 
 ### Polynomial Fitting and MPC Preprocessing
@@ -44,9 +44,9 @@ The waypoint were processed in `main.cpp` file to transform the into vehicle per
 
 
 ### Model Predictive Control with Latency
-A contributing factor to latency is actuator dynamics. Additionally, there's a 100 millisecond latency between actuations commands on top of the connection latency. 
+A contributing factor to latency is actuator dynamics. Additionally, there's a 100 millisecond latency between actuations commands on top of the connection latency.
 
-A kinematic model has been used to deal with latency (as proposed after the first submission review). Here, the controller has used kinematic equationsto predict the states after $100\mu s$ before sending them to MPC solver. The update is placed after polynomial fitting and uses vehicle map coordinates.
+A kinematic model has been used to deal with latency (as proposed after the first submission review). Here, the controller has used kinematic equations to predict the states after $100\mu s$ before sending them to MPC solver. The update is placed before polynomial fitting and uses global map coordinates.
 
 
 
