@@ -114,20 +114,26 @@ int main() {
           vector<double> waypoints_x;
           vector<double> waypoints_y;
 
+          // Conver ptsx into Eigern::VectorXd for polyfit function
+          Eigen::VectorXd ptsx_car(ptsx.size());
+          ptsx_car.fill(0.0);
+          Eigen::VectorXd ptsy_car(ptsy.size());
+          ptsy_car.fill(0.0);
+
           for (size_t i = 0; i < ptsx.size(); i++) {
             // shift car reference angle to 90 degrees
             double shift_x = ptsx[i] - px_next;
             double shift_y = ptsy[i] - py_next;
-            ptsx[i] = (shift_x*cos(0-psi_next) - shift_y*sin(0-psi_next));
-            ptsy[i] = (shift_x*sin(0-psi_next) + shift_y*cos(0-psi_next));
+            ptsx_car[i] = (shift_x*cos(0-psi_next) - shift_y*sin(0-psi_next));
+            ptsy_car[i] = (shift_x*sin(0-psi_next) + shift_y*cos(0-psi_next));
           }
 
-          double* ptrx = &ptsx[0];
-          double* ptry = &ptsy[0];
-          Eigen::Map<Eigen::VectorXd> ptsx_transform(ptrx, 6);
-          Eigen::Map<Eigen::VectorXd> ptsy_transform(ptry, 6);
+          //double* ptrx = &ptsx[0];
+          //double* ptry = &ptsy[0];
+          //Eigen::Map<Eigen::VectorXd> ptsx_transform(ptrx, 6);
+          //Eigen::Map<Eigen::VectorXd> ptsy_transform(ptry, 6);
 
-          auto coeffs = polyfit(ptsx, ptsy, 3);
+          auto coeffs = polyfit(ptsx_car, ptsy_car, 3);
           double cte = polyeval(coeffs, 0);
           double epsi = -atan(coeffs[1]);
 
@@ -147,8 +153,8 @@ int main() {
           
 
           auto vars = mpc.Solve(state, coeffs);
-          double steer_value = vars[0];
-          double throttle_value = vars[1];
+          steer_value = vars[0];
+          throttle_value = vars[1];
           
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
