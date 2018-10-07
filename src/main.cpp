@@ -94,8 +94,8 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
-          double steer_value = j[1]["steering_angle"];
-          double throttle_value = j[1]["throttle"];
+          //double steer_value = j[1]["steering_angle"];
+          //double throttle_value = j[1]["throttle"];
           // v*=0.44704; velocity is in miles
 
           /*
@@ -127,7 +127,7 @@ int main() {
           Eigen::Map<Eigen::VectorXd> ptsx_transform(ptrx, 6);
           Eigen::Map<Eigen::VectorXd> ptsy_transform(ptry, 6);
 
-          auto coeffs = polyfit(ptsx_transform, ptsy_transform, 3);
+          auto coeffs = polyfit(ptsx, ptsy, 3);
           double cte = polyeval(coeffs, 0);
           double epsi = -atan(coeffs[1]);
 
@@ -142,13 +142,13 @@ int main() {
           //epsi = epsi - v*steer_value*latency/Lf;
 
           Eigen::VectorXd state(6);
-          state << px, py, psi, v_next, cte, epsi;
+          state << px, py, psi, v, cte, epsi;
           
           
 
           auto vars = mpc.Solve(state, coeffs);
-          steer_value = vars[0];
-          throttle_value = vars[1];
+          double steer_value = vars[0];
+          double throttle_value = vars[1];
           
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
@@ -167,8 +167,8 @@ int main() {
           //double poly_inc = 2.5;
           int num_points = 25;
           for (int i = 1; i < num_points; i++) {
-            next_x_vals.push_back(i);
-            next_y_vals.push_back(polyeval(coeffs, i));
+            next_x_vals.push_back(ptsx[i]);
+            next_y_vals.push_back(ptsy[i]);
           }
           
           msgJson["next_x"] = next_x_vals;
