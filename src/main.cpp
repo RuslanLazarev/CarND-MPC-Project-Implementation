@@ -129,12 +129,12 @@ int main() {
 
           //
           px = py = psi = 0;
-          px += v*cos(psi)*latency; // px = 0
-          py += v*sin(psi)*latency; // py = 0
-          //cte= cte + v*sin(epsi)*latency;
-          //epsi = epsi - v*steer_value*latency/Lf;
-          psi -= v*steer_value*latency/Lf; // psi = 0
-          //v = v + throttle_value*latency;
+          px = px + v*cos(psi)*latency; // px = 0
+          py = py + v*sin(psi)*latency; // py = 0
+          cte= cte + v*sin(epsi)*latency;
+          epsi = epsi - v*steer_value*latency/Lf;
+          psi = psi - v*steer_value*latency/Lf; // psi = 0
+          v = v + throttle_value*latency;
 
           Eigen::VectorXd state(6);
           state << px, py, psi, v, cte, epsi;
@@ -147,7 +147,7 @@ int main() {
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
-          msgJson["steering_angle"] = steer_value/(deg2rad(25));
+          msgJson["steering_angle"] = -1.0 * steer_value/(deg2rad(25));
           msgJson["throttle"] = throttle_value;
 
 
