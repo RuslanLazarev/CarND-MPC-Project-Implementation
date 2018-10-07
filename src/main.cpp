@@ -94,6 +94,8 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
+          double steer_value = j[1]["steering_angle"];
+          double throttle_value = j[1]["throttle"];
           // v*=0.44704; velocity is in miles
 
           /*
@@ -123,8 +125,7 @@ int main() {
           double cte = polyeval(coeffs, 0);
           double epsi = -atan(coeffs[1]);
 
-          double steer_value = j[1]["steering_angle"];
-          double throttle_value = j[1]["throttle"];
+          
 
           //
           psi = 0;
@@ -148,7 +149,7 @@ int main() {
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
-          msgJson["steering_angle"] = steer_value/(deg2rad(25));
+          msgJson["steering_angle"] = -1.0 * steer_value/(deg2rad(25));
           msgJson["throttle"] = throttle_value;
 
 
