@@ -105,6 +105,9 @@ int main() {
           *
           */
 
+          // compensation for latency
+          
+
           vector<double> waypoints_x;
           vector<double> waypoints_y;
 
@@ -128,18 +131,20 @@ int main() {
           
 
           //
-          psi = 0;
-          px = 0;
-          py = 0;
+          
           px += v*cos(psi)*latency; // px = 0
           py += v*sin(psi)*latency; // py = 0
-          cte= cte + v*sin(epsi)*latency;
-          epsi = epsi - v*steer_value*latency/Lf;
+         
           psi -= v*steer_value*latency/Lf; // psi = 0
           v = v + throttle_value*latency;
 
           Eigen::VectorXd state(6);
           state << px, py, psi, v, cte, epsi;
+          psi = 0;
+          px = 0;
+          py = 0;
+          cte= cte + v*sin(epsi)*latency;
+          epsi = epsi - v*steer_value*latency/Lf;
           
 
           auto vars = mpc.Solve(state, coeffs);
