@@ -105,51 +105,39 @@ int main() {
           *
           */
 
-          // compensation for latency
-          double px_next = px + v*cos(psi)*latency;
-          double py_next = py +  v*sin(psi)*latency;
-          double psi_next = psi - v*steer_value*latency/Lf;
-          double v_next = v + throttle_value*latency;
-
           vector<double> waypoints_x;
           vector<double> waypoints_y;
 
-          // Conver ptsx into Eigern::VectorXd for polyfit function
-          Eigen::VectorXd ptsx_car(ptsx.size());
-          ptsx_car.fill(0.0);
-          Eigen::VectorXd ptsy_car(ptsy.size());
-          ptsy_car.fill(0.0);
-
           for (size_t i = 0; i < ptsx.size(); i++) {
             // shift car reference angle to 90 degrees
-            double shift_x = ptsx[i] - px_next;
-            double shift_y = ptsy[i] - py_next;
-            ptsx_car[i] = (shift_x*cos(0-psi_next) - shift_y*sin(0-psi_next));
-            ptsy_car[i] = (shift_x*sin(0-psi_next) + shift_y*cos(0-psi_next));
+            double shift_x = ptsx[i] - px;
+            double shift_y = ptsy[i] - py;
+            ptsx[i] = (shift_x*cos(0-psi) - shift_y*sin(0-psi));
+            ptsy[i] = (shift_x*sin(0-psi) + shift_y*cos(0-psi));
           }
 
-          //double* ptrx = &ptsx[0];
-          //double* ptry = &ptsy[0];
-          //Eigen::Map<Eigen::VectorXd> ptsx_transform(ptrx, 6);
-          //Eigen::Map<Eigen::VectorXd> ptsy_transform(ptry, 6);
+          double* ptrx = &ptsx[0];
+          double* ptry = &ptsy[0];
+          Eigen::Map<Eigen::VectorXd> ptsx_transform(ptrx, 6);
+          Eigen::Map<Eigen::VectorXd> ptsy_transform(ptry, 6);
 
-          auto coeffs = polyfit(ptsx_car, ptsy_car, 3);
+          auto coeffs = polyfit(ptsx_transform, ptsy_transform, 3);
           double cte = polyeval(coeffs, 0);
           double epsi = -atan(coeffs[1]);
 
           
 
           //
-          psi = 0;
-          px = 0;
-          py = 0;
-          
-          //cte = cte + v*sin(epsi)*latency;
+          px = py = psi = 0;
+          px += v*cos(psi)*latency; // px = 0
+          py += v*sin(psi)*latency; // py = 0
+          //cte= cte + v*sin(epsi)*latency;
           //epsi = epsi - v*steer_value*latency/Lf;
+          psi -= v*steer_value*latency/Lf; // psi = 0
+          //v = v + throttle_value*latency;
 
           Eigen::VectorXd state(6);
           state << px, py, psi, v, cte, epsi;
-          
           
 
           auto vars = mpc.Solve(state, coeffs);
@@ -159,7 +147,7 @@ int main() {
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
-          msgJson["steering_angle"] = -1.0 * steer_value/(deg2rad(25));
+          msgJson["steering_angle"] = steer_value/(deg2rad(25));
           msgJson["throttle"] = throttle_value;
 
 
@@ -172,9 +160,9 @@ int main() {
 
           //double poly_inc = 2.5;
           int num_points = 25;
-          for (int i = 0; i < ptsx_car.size(); i++) {
-            next_x_vals.push_back(ptsx_car[i]);
-            next_y_vals.push_back(ptsy_car[i]);
+          for (int i = 1; i < num_points; i++) {
+            next_x_vals.push_back(i);
+            next_y_vals.push_back(polyeval(coeffs, i));
           }
           
           msgJson["next_x"] = next_x_vals;
