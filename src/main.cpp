@@ -173,8 +173,8 @@ int main() {
           //double poly_inc = 2.5;
           int num_points = 25;
           for (int i = 1; i < num_points; i++) {
-            next_x_vals.push_back(ptsx[i]);
-            next_y_vals.push_back(ptsy[i]);
+            next_x_vals.push_back(ptsx_car[i]);
+            next_y_vals.push_back(ptsy_car[i]);
           }
           
           msgJson["next_x"] = next_x_vals;
